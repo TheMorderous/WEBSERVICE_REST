@@ -2,7 +2,7 @@
 from flask import Flask, jsonify, request
 from config import config
 from flask_mysqldb import MySQL
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app=Flask(__name__)
 
@@ -59,54 +59,47 @@ def buscar(titulo):
 
 
 ##Funcion para generar un pedido
-
-@app.route('/nuevo_pedido', methods=['POST'])
-def nuevo_pedido():
+#Funcion para generar un nuevo pedido
+# Funcion para generar un nuevo pedido
+@app.route('/pedido', methods=['POST'])
+def generar_pedido():
     try:
+        # Se obtienen los datos del pedido a través del cuerpo de la solicitud
         datos_pedido = request.get_json()
-        libros = datos_pedido.get('libros')
-        id_sucursal = datos_pedido.get('id_sucursal')
-        fecha_pedido = datetime.strptime(datos_pedido.get('fecha_pedido'), '%Y-%m-%d')
-        fecha_entrega = datetime.strptime(datos_pedido.get('fecha_entrega'), '%Y-%m-%d')
         
+        # Se obtienen los datos necesarios del pedido
+        libros = datos_pedido['libros']
+        cantidad = []
+        for libro in libros:
+            cantidad.append(libro['cantidad'])
+        id_sucursal = datos_pedido['id_sucursal']
+        fecha_pedido = datetime.now().strftime('%Y-%m-%d')
+        fecha_entrega = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
+        
+        # Se crea el registro del pedido en la tabla pedidos
         cursor = conexion.connection.cursor()
+        sql = """
+            INSERT INTO pedidos (id_libro, id_sucursal, fecha_pedido, fecha_entrega)
+            VALUES (%s, %s, %s, %s);
+            """
         
-        # Verificar que hay suficiente stock en la bodega central
-        for libro in libros:
-            id_libro = libro.get('id_libro')
-            cantidad = libro.get('cantidad')
-            
-            sql = "SELECT cantidad FROM libro_sucursal WHERE id_libro = %s AND id_sucursal = 1"
-            cursor.execute(sql, (id_libro,))
-            stock_bodega_central = cursor.fetchone()
-            if stock_bodega_central is None:
-                return jsonify({'mensaje': f"No se encontró el libro con id {id_libro}."})
-            stock_bodega_central = stock_bodega_central[0]
-            
-            if stock_bodega_central < cantidad:
-                return jsonify({'mensaje': f"No hay suficiente stock en la bodega central para el libro con id {id_libro}."})
-        
-        # Agregar el pedido a la base de datos
-        for libro in libros:
-            id_libro = libro.get('id_libro')
-            cantidad = libro.get('cantidad')
-            
-            # Actualizar la cantidad de libros en la sucursal correspondiente
-            sql = "UPDATE libro_sucursal SET cantidad = cantidad - %s WHERE id_libro = %s AND id_sucursal = 6"
-            cursor.execute(sql, (cantidad, id_libro))
-            
-            # Insertar el pedido en la tabla "pedidos"
-            sql = "INSERT INTO pedidos (id_libro, id_sucursal, fecha_pedido, fecha_entrega) VALUES (%s, %s, %s, %s)"
+        # Se recorren los libros y se actualiza la tabla libro_sucursal
+        for i in range(len(libros)):
+            id_libro = libros[i]['id_libro']
+            cant = cantidad[i]
+            # Se actualiza la cantidad de libros en la sucursal correspondiente
+            sql_update = "UPDATE libro_sucursal SET cantidad = cantidad - %s WHERE id_libro = %s AND id_sucursal = %s"
+            cursor.execute(sql_update, (cant, id_libro, id_sucursal))
+            # Se agrega el detalle del libro al pedido
             cursor.execute(sql, (id_libro, id_sucursal, fecha_pedido, fecha_entrega))
-            
-        # Guardar los cambios en la base de datos
-        conexion.connection.commit()
         
-        return jsonify({'mensaje': 'Pedido agregado correctamente.'})
+        conexion.connection.commit()
+        return "Pedido generado correctamente"
     
     except Exception as ex:
-        return jsonify({'mensaje': f"Error al agregar el pedido: {ex}"})
-
+        print(str(ex))
+        conexion.connection.rollback()
+        return "Algo hiciste mal, wea"
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])

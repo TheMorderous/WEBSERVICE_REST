@@ -52,4 +52,12 @@ CREATE TABLE libro_sucursal (
   FOREIGN KEY (id_libro) REFERENCES libro(id_libro),
   FOREIGN KEY (id_sucursal) REFERENCES sucursal(id_sucursal)
 );
+Un ejemplo de JSON que debe recibir la funcion generar_pedido() es:
 
+{
+    "libros": [
+        {"id_libro": 1, "cantidad": 3},
+        {"id_libro": 2, "cantidad": 3}
+    ],
+    "id_sucursal": 1
+}
