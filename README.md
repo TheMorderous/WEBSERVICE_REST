@@ -52,6 +52,53 @@ CREATE TABLE libro_sucursal (
   FOREIGN KEY (id_libro) REFERENCES libro(id_libro),
   FOREIGN KEY (id_sucursal) REFERENCES sucursal(id_sucursal)
 );
+
+Rellenar tablas BBDD
+
+INSERT INTO libro (titulo, autor, editorial)
+VALUES
+('ChainsawMan #1', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #2', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #3', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #4', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #5', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #6', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #7', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #8', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #9', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #10', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #11', 'Tatsuki Fujimoto', 'IVREA'),
+('ChainsawMan #12', 'Tatsuki Fujimoto', 'IVREA'),
+('Jujutsu Kaisen #1', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #2', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #3', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #4', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #5', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #6', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #7', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #8', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #9', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #10', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #11', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #12', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #13', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #14', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #15', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #16', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #17', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #18', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #19', 'Gege Akutami', 'Norma Editorial'),
+('Jujutsu Kaisen #20', 'Gege Akutami', 'Norma Editorial');
+
+INSERT INTO sucursal (nombre, direccion, pais) 
+VALUES 
+  ('Librería Nacional', 'Av. Providencia 2700, Providencia', 'Chile'),
+  ('Librería Antártica', 'Costanera Center, Av. Andrés Bello 2425, Providencia', 'Chile'),
+  ('Librería Qué Leo', 'Av. Chile España 393, Providencia', 'Chile'),
+  ('Librería Catalonia', 'Nueva Providencia 2353, Providencia', 'Chile'),
+  ('Librería Golden Book', 'Mall Alto Las Condes, Av. Kennedy 9001, Las Condes', 'Chile');
+
+
 Un ejemplo de JSON que debe recibir la funcion generar_pedido() es:
 
 {
