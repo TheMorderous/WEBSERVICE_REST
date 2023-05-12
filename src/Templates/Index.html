@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sexo Book</title>
+    <script src="Functions.js"></script>
+</head>
+<body>
+	<h1>Listado de libros</h1>
+	<button onclick="listarLibros()">Listar libros</button>
+	<table id="tabla">
+	</table>
+
+    <h1>Buscar libro</h1>
+    <input type="text" id="input-titulo" placeholder="Ingrese título del libro">
+    <button id="boton-buscar">Buscar</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre del libro</th>
+          <th>ID del libro</th>
+          <th>Nombre de la sucursal</th>
+          <th>Cantidad de libros en la sucursal</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-resultados"></tbody>
+    </table>
+</body>
+</html>

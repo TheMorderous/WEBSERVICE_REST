@@ -4,19 +4,23 @@ from config import config
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
 
+
 app=Flask(__name__)
 
 conexion = MySQL(app)
 #Funcion para listra todos los libros disponibles en las distintas sucursales
+
 @app.route('/listar', methods =['GET'])
 def listar_libros():
     try:
         cursor=conexion.connection.cursor()
         sql="""
-            SELECT libro.titulo AS 'Nombre del libro', libro.id_libro AS 'ID del libro', sucursal.nombre AS 'Nombre de la sucursal', libro_sucursal.cantidad AS 'Cantidad de libros en la sucursal'
+            SELECT libro.titulo AS 'Nombre del libro', libro.id_libro AS 'ID del libro', sucursal.nombre AS 'Nombre de la sucursal', SUM(libro_sucursal.cantidad) AS 'Cantidad de libros en la sucursal'
             FROM libro
             JOIN libro_sucursal ON libro.id_libro = libro_sucursal.id_libro
-            JOIN sucursal ON libro_sucursal.id_sucursal = sucursal.id_sucursal;
+            JOIN sucursal ON libro_sucursal.id_sucursal = sucursal.id_sucursal
+            GROUP BY libro.id_libro, sucursal.id_sucursal
+            HAVING SUM(libro_sucursal.cantidad) > 0;
             """
         cursor.execute(sql)
         datos=cursor.fetchall()
@@ -29,6 +33,7 @@ def listar_libros():
         return "Algo hiciste mal, wea" 
     
 #Funcion para buscar libros especificos por el nombre en todas las sucursales que esten disponibles (asumimos que no se sabran los ID de memoria)
+
 @app.route('/buscar/<titulo>', methods =['GET'])
 def buscar(titulo):
     print(f"El valor del parámetro 'titulo' es: {titulo}")
@@ -58,6 +63,7 @@ def buscar(titulo):
 
 
 # Funcion para generar un nuevo pedido
+
 @app.route('/actualizar_libros', methods=['PUT'])
 def actualizar_libro():
     try:
@@ -94,7 +100,7 @@ def actualizar_libro():
 
 
 
-    
+
 @app.route('/factura', methods=['POST'])
 def generar_factura():
     try:
@@ -127,6 +133,20 @@ def generar_factura():
         conexion.connection.rollback()
 
         return "Algo hiciste mal, wea"
+
+@app.route('/ultimo_pedido', methods=['GET'])
+def ultimo_pedido():
+    try:
+        cursor = conexion.connection.cursor()
+        # Se obtiene el id del último pedido generado
+        cursor.execute("SELECT MAX(id_pedido) FROM pedidos")
+        id_pedido = cursor.fetchone()[0]            
+        conexion.connection.commit()
+        return "El id del pedido es: " + str(id_pedido)
+    except Exception as ex:
+        print(str(ex))
+        conexion.connection.rollback()
+        return "Algo hiciste mal, wea"        
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])

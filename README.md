@@ -99,7 +99,7 @@ VALUES
   ('Librería Golden Book', 'Mall Alto Las Condes, Av. Kennedy 9001, Las Condes', 'Chile');
 
 
-Un ejemplo de JSON que debe recibir la funcion generar_pedido() es:
+Un ejemplo de JSON que debe recibir la funcion actualizar_libros() y factrua es:
 
 {
     "libros": [
